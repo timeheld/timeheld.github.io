@@ -217,6 +217,7 @@ section[id] { scroll-margin-top: 40px; }
 .availability.ready { color: #18763b; }
 .availability.tested { color: #18763b; }
 .availability.testing { color: #795b25; }
+.availability.development { color: #795b25; }
 .browser-card p { flex: 1; font-size: 12px; line-height: 1.75; color: var(--muted); margin-bottom: 24px; }
 .browser-card .text-link { font-size: 11px; gap: 9px; }
 .browser-honesty { color: var(--muted); font-size: 11px; line-height: 1.8; margin: 22px 0 0; }
