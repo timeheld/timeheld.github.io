@@ -1,7 +1,7 @@
 # Timeheld website
 
 Buildless marketing site for Timeheld. Editable HTML, CSS and JavaScript live in `dist/`.
-The Sites project identity is in `.openai/hosting.json`.
+The live site is https://timeheld.app/, deployed from `main` in `timeheld/timeheld.github.io` by the GitHub Pages workflow. The separate `TimeheldWebsite` checkout is the older Sites version; this checkout is the current public source.
 
 ## Preview
 
@@ -10,14 +10,16 @@ http://127.0.0.1:4318. No dependency installation or build step is required.
 
 ## Release status
 
-The user requested a public site with Safari supported and Chrome, Edge and
-Firefox marked coming soon. They explicitly instructed not to offer the app
-for download yet. No app binaries, ZIPs, profiles, certificates or developer
-credentials belong in the website or its public source repository.
+Public app downloads remain disabled at the user's request. No app binaries,
+ZIPs, profiles, certificates, native host executables or developer credentials
+belong in this website or its public source repository.
 
-`/downloads/` is an availability page with a disabled public-download button.
-Safari is bundled with the app; there is no separate Safari store listing to
-link. Replace coming-soon statuses only when real store listings are supplied.
+The browser pages now describe the Mac build-93 testing previews: Safari is
+bundled, Chrome passed a live start/open-page-block/release check, and Edge and
+Firefox packages are built but awaiting real-browser acceptance. Setup guidance
+is for invited testers who already have the Mac update. Do not invent browser
+store URLs or imply public availability before signed/store releases exist.
+The preview files are opened from the installed app, not downloaded here.
 
 Analytics imagery uses synthetic data from the app's isolated renderer.
 The interactive timer is a presentation demo; it never blocks browser sites.
