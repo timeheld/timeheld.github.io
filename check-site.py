@@ -29,8 +29,13 @@ for file in root.rglob('*.html'):
    p=Page();p.feed(target.read_text())
    if u.fragment not in p.ids:errors.append(f'{file}: missing anchor {link}')
  if re.search(r'href=[\"\'][^\"\']*\.(zip|dmg|pkg)([\"\'?#])',text):errors.append(f'{file}: forbidden app-download link')
+ALLOWED_EMAILS={'support@timeheld.app'}
+for file in root.rglob('*'):
+ if file.is_file() and file.suffix.lower() in ['.html','.js','.mjs','.css','.txt','.webmanifest','.svg','.json','.xml']:
+  for email in set(re.findall(r'[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}',file.read_text(errors='ignore'))):
+   if email.lower() not in ALLOWED_EMAILS:errors.append(f'{file}: unapproved email address {email}')
 for file in root.rglob('*'):
  if file.is_file() and file.suffix.lower() in ['.zip','.dmg','.pkg','.mobileprovision','.provisionprofile','.p8','.p12','.pem']:
   errors.append(f'Forbidden distributable or sensitive file: {file}')
 assert not errors, '\n'.join(errors)
-print(f'Passed: {len(list(root.rglob("*.html")))} pages, all local links/anchors, landmarks, alt text; no app binary downloads or sensitive files.')
+print(f'Passed: {len(list(root.rglob("*.html")))} pages, all local links/anchors, landmarks, alt text; no app binary downloads, sensitive files or unapproved email addresses.')
