@@ -215,6 +215,8 @@ section[id] { scroll-margin-top: 40px; }
 .browser-card h3 { font-size: 20px; margin-bottom: 10px; }
 .availability { font-size: 10px; line-height: 1.6; color: #73767c; min-height: 34px; }
 .availability.ready { color: #18763b; }
+.availability.tested { color: #18763b; }
+.availability.testing { color: #795b25; }
 .browser-card p { flex: 1; font-size: 12px; line-height: 1.75; color: var(--muted); margin-bottom: 24px; }
 .browser-card .text-link { font-size: 11px; gap: 9px; }
 .browser-honesty { color: var(--muted); font-size: 11px; line-height: 1.8; margin: 22px 0 0; }
@@ -276,6 +278,10 @@ summary::-webkit-details-marker { display: none; }
 .browser-table a { display: flex; align-items: center; justify-content: flex-end; gap: 12px; font-size: 12px; }
 .browser-table a svg { width: 16px; height: 16px; }
 .browser-table .coming-status { font-size: 11px; color: var(--muted); justify-self: end; }
+.browser-preview-guide { padding: 24px 0; border-top: 1px solid var(--line); scroll-margin-top: 100px; }
+.browser-preview-guide .availability { display: inline-block; min-height: 0; font-size: 11px; letter-spacing: .04em; }
+.browser-preview-guide h3 { margin-top: 10px; }
+.browser-preview-guide code { overflow-wrap: anywhere; font-size: .9em; }
 .fine-print { font-size: 11px !important; line-height: 1.8; margin-top: 20px; }
 .companion-note { display: flex; gap: 50px; border-top: 1px solid var(--line); padding-block: 32px 64px; }
 .companion-note > span { font-size: 10px; color: var(--muted); letter-spacing: .06em; min-width: 115px; }
