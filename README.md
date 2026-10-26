@@ -14,12 +14,13 @@ Public app downloads remain disabled at the user's request. No app binaries,
 ZIPs, profiles, certificates, native host executables or developer credentials
 belong in this website or its public source repository.
 
-The browser pages now describe the Mac build-93 testing previews: Safari is
-bundled, Chrome passed a live start/open-page-block/release check, and Edge and
-Firefox packages are built but awaiting real-browser acceptance. Setup guidance
-is for invited testers who already have the Mac update. Do not invent browser
-store URLs or imply public availability before signed/store releases exist.
-The preview files are opened from the installed app, not downloaded here.
+Browser status: Safari is bundled with the Mac app. Chrome, Edge and Firefox
+are shown as "Under development" everywhere on the site, with no public
+unpacked/temporary/developer-mode install steps. Keep the `#chrome`, `#edge`,
+`#firefox` and `#browser-previews` anchors so existing links keep working.
+Do not invent browser store URLs or imply public availability. Replace the
+status with a real listing link only after a store release and end-to-end
+customer setup are verified. `tests/site-content.test.mjs` enforces this.
 
 Analytics imagery uses synthetic data from the app's isolated renderer.
 The interactive timer is a presentation demo; it never blocks browser sites.
