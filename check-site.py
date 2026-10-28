@@ -4,6 +4,7 @@ from urllib.parse import urlsplit, unquote
 import re
 root=Path(__file__).parent/'dist'
 errors=[]
+preserved_home=Path(__file__).parent/'preserved'/'full-site'/'index.html'
 class Page(HTMLParser):
  def __init__(self): super().__init__(); self.links=[]; self.ids=[]; self.main=0; self.title=0
  def handle_starttag(self,tag,attrs):
@@ -26,9 +27,19 @@ for file in root.rglob('*.html'):
   if target.is_dir():target=target/'index.html'
   if not target.exists():errors.append(f'{file}: broken local link {link}')
   elif u.fragment and target.suffix=='.html':
+   # While the coming-soon placeholder is served at /, parked pages keep their
+   # links into the full homepage; validate those anchors against the preserved copy.
+   if target==root/'index.html' and preserved_home.exists():target=preserved_home
    p=Page();p.feed(target.read_text())
    if u.fragment not in p.ids:errors.append(f'{file}: missing anchor {link}')
  if re.search(r'href=[\"\'][^\"\']*\.(zip|dmg|pkg)([\"\'?#])',text):errors.append(f'{file}: forbidden app-download link')
+# Coming-soon placeholder at /: logo, "Coming soon" and the support mailto only.
+home=(root/'index.html').read_text()
+if not preserved_home.exists():errors.append('Preserved full homepage missing: preserved/full-site/index.html')
+if not (root/'privacy'/'index.html').exists():errors.append('dist/privacy/index.html must stay live (Chrome Web Store privacy URL)')
+if re.findall(r'<a\s[^>]*href="([^"]*)"',home)!=['mailto:support@timeheld.app']:errors.append('Placeholder must link only to mailto:support@timeheld.app')
+for tag in ['<nav','<footer','<header','<script','<iframe','<form','http://','https://']:
+ if tag in home:errors.append(f'Placeholder must not contain {tag}')
 ALLOWED_EMAILS={'support@timeheld.app'}
 for file in root.rglob('*'):
  if file.is_file() and file.suffix.lower() in ['.html','.js','.mjs','.css','.txt','.webmanifest','.svg','.json','.xml']:

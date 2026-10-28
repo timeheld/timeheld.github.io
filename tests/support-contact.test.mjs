@@ -14,7 +14,8 @@ const textFiles = files().filter((file) => ['.html', '.js', '.mjs', '.css', '.tx
 
 test('every page footer links to the support mailto', () => {
   assert.ok(htmlFiles.length >= 6);
-  for (const file of htmlFiles) {
+  // The coming-soon placeholder at / has no footer; tests/placeholder.test.mjs covers its mailto.
+  for (const file of htmlFiles.filter((path) => path !== join(dist, 'index.html'))) {
     const footer = readFileSync(file, 'utf8').match(/<footer class="site-footer">[\s\S]*?<\/footer>/)?.[0];
     assert.ok(footer, `${file} has a footer`);
     assert.match(footer, new RegExp(`<a href="mailto:${SUPPORT}">${SUPPORT}</a>`), file);

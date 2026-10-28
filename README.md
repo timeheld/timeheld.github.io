@@ -8,6 +8,18 @@ The live site is https://timeheld.app/, deployed from `main` in `timeheld/timehe
 Run `python3 -m http.server 4318 --bind 127.0.0.1 --directory dist` and open
 http://127.0.0.1:4318. No dependency installation or build step is required.
 
+## Coming-soon placeholder
+
+`/` currently serves a minimal placeholder (`dist/index.html`): the Timeheld logo,
+"Coming soon" and a `mailto:support@timeheld.app` link. Nothing else. The full
+homepage is preserved unchanged at `preserved/full-site/index.html` (not deployed).
+`/privacy/` stays live because it is the Chrome Web Store privacy URL. `/downloads/`,
+`/guide/`, `/releases/` and `404.html` are unchanged and still reachable by direct
+URL, but the placeholder doesn't link to them. Tag `full-site-before-placeholder`
+marks the pre-placeholder state. See `RESTORE-FULL-SITE.md` to restore at launch.
+The placeholder uses a self-hosted Basic Latin subset of Inter
+(`dist/assets/fonts/`, SIL OFL 1.1, licence alongside). It makes no external requests.
+
 ## Release status
 
 Public app downloads remain disabled at the user's request. No app binaries,

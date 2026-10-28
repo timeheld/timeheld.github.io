@@ -29,8 +29,8 @@ test('downloads page lists Chrome, Edge and Firefox as under development and Saf
   assert.match(read('downloads/index.html'), /<button class="button button-unavailable" type="button" disabled>/);
 });
 
-test('homepage browser cards show Under development for Chrome, Edge and Firefox', () => {
-  const html = read('index.html');
+test('preserved full homepage browser cards show Under development for Chrome, Edge and Firefox', () => {
+  const html = readFileSync(new URL('../preserved/full-site/index.html', import.meta.url), 'utf8');
   for (const browser of ['Chrome', 'Edge', 'Firefox']) {
     assert.match(html, new RegExp(`<h3>${browser}</h3><span class="availability development">Under development</span>`), browser);
   }
