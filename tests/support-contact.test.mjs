@@ -4,25 +4,32 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join, extname } from 'node:path';
 
 const dist = new URL('../dist/', import.meta.url).pathname;
+const preserved = new URL('../preserved/full-site/', import.meta.url).pathname;
+const STUBS = ['privacy/index.html', 'downloads/index.html', 'guide/index.html', 'releases/index.html', '404.html'].map((p) => join(dist, p));
 const SUPPORT = 'support@timeheld.app';
 const files = (dir = dist) => readdirSync(dir).flatMap((name) => {
   const path = join(dir, name);
   return statSync(path).isDirectory() ? files(path) : [path];
 });
 const htmlFiles = files().filter((file) => file.endsWith('.html'));
-const textFiles = files().filter((file) => ['.html', '.js', '.mjs', '.css', '.txt', '.webmanifest', '.svg', '.json', '.xml'].includes(extname(file)));
+const textFiles = [...files(), ...files(preserved)].filter((file) => ['.html', '.js', '.mjs', '.css', '.txt', '.webmanifest', '.svg', '.json', '.xml'].includes(extname(file)));
 
 test('every page footer links to the support mailto', () => {
   assert.ok(htmlFiles.length >= 6);
-  for (const file of htmlFiles) {
+  // The placeholder at / and the redirect stubs have no footer (tests/placeholder.test.mjs and
+  // tests/redirect-stubs.test.mjs cover them); the preserved full-site pages keep theirs.
+  const pages = [...htmlFiles.filter((path) => path !== join(dist, 'index.html') && !STUBS.includes(path)),
+    ...files(preserved).filter((file) => file.endsWith('.html') && file !== join(preserved, 'index.html'))];
+  assert.equal(pages.length, 5);
+  for (const file of pages) {
     const footer = readFileSync(file, 'utf8').match(/<footer class="site-footer">[\s\S]*?<\/footer>/)?.[0];
     assert.ok(footer, `${file} has a footer`);
     assert.match(footer, new RegExp(`<a href="mailto:${SUPPORT}">${SUPPORT}</a>`), file);
   }
 });
 
-test('privacy page has a contact line with the support mailto', () => {
-  const html = readFileSync(join(dist, 'privacy/index.html'), 'utf8');
+test('preserved privacy page keeps its contact line with the support mailto', () => {
+  const html = readFileSync(join(preserved, 'privacy/index.html'), 'utf8');
   assert.match(html, new RegExp(`<h2 id="contact">Contact</h2><p>Questions or support: <a href="mailto:${SUPPORT}">${SUPPORT}</a></p>`));
 });
 
