@@ -1,17 +1,14 @@
 # Restoring the full Timeheld website at launch
 
-While the coming-soon placeholder is live, only two real pages are public:
+While the coming-soon placeholder is live, only one real page is public:
+`/` (`dist/index.html`) shows only the Timeheld logo, "Coming soon" and `support@timeheld.app`.
 
-- `/` (`dist/index.html`) shows only the Timeheld logo, "Coming soon" and `support@timeheld.app`.
-- `/privacy/` (`dist/privacy/index.html`) is live and indexable (it is the Chrome Web Store
-  privacy URL). Its policy text is unchanged; only the header nav and the footer links to
-  hidden pages were removed so it doesn't send visitors into redirects.
-
-Every other page is a redirect stub to `/` (meta refresh + `location.replace('/')`,
+Every other page, including `/privacy/`, is a redirect stub to `/` (meta refresh + `location.replace('/')`,
 `<meta name="robots" content="noindex">`, canonical `https://timeheld.app/`, a fallback link):
 
 | Public URL | Stub in `dist/` | Original preserved at |
 |---|---|---|
+| `/privacy/` | `dist/privacy/index.html` | `preserved/full-site/privacy/index.html` |
 | `/downloads/` | `dist/downloads/index.html` | `preserved/full-site/downloads/index.html` |
 | `/guide/` | `dist/guide/index.html` | `preserved/full-site/guide/index.html` |
 | `/releases/` | `dist/releases/index.html` | `preserved/full-site/releases/index.html` |
@@ -20,7 +17,6 @@ Every other page is a redirect stub to `/` (meta refresh + `location.replace('/'
 Also preserved:
 
 - `preserved/full-site/index.html`: the full homepage.
-- `preserved/full-site/privacy/index.html`: the privacy page with its original header and footer.
 
 Every preserved file is byte-for-byte identical to `main` before the placeholder;
 `tests/redirect-stubs.test.mjs` pins their sha256. `preserved/` is outside `dist/`, so it is
@@ -28,14 +24,17 @@ not deployed. `dist/site.js`, `dist/demo-clock.mjs`, `dist/styles.css` and all a
 are unchanged. The git tag `full-site-before-placeholder` marks `main` exactly as it was
 before the placeholder (commit `0e955a6`, the PR #4 merge).
 
-**Privacy caution:** if `/privacy/` has been updated since the placeholder (for example
-privacy policy v0.8 has been published), do **not** copy `preserved/full-site/privacy/index.html`
-over it. That would roll the policy back. Restore only the header and footer (Option B, step 3).
+**Privacy caution:** `/privacy/` is the Chrome Web Store privacy URL, so restore it before
+(or together with) any store submission. `preserved/full-site/privacy/index.html` is the
+October 25, 2026 policy. If a newer policy has been approved since (for example privacy
+policy v0.8 from Legal) or has already been committed to `dist/privacy/index.html`, do
+**not** restore the preserved copy over it, which would roll the policy back. Publish the
+approved version instead, with the original header and footer (Option B, step 3).
 
 ## Option A (preferred if nothing else changed): revert the placeholder merge
 
 This undoes everything the placeholder PR changed: the placeholder page, all four redirect
-stubs, the privacy header/footer edit, the self-hosted Inter subset, the check-site/test
+stubs (including `/privacy/`), the self-hosted Inter subset, the check-site/test
 changes and this file. It keeps every later commit.
 
 ```sh
@@ -72,16 +71,17 @@ git diff full-site-before-placeholder -- dist/index.html dist/downloads/index.ht
   dist/guide/index.html dist/releases/index.html dist/404.html
 
 # 3. Privacy page.
-#    3a. If dist/privacy/index.html is unchanged since the placeholder (check with
-#        `git log --oneline full-site-before-placeholder..HEAD -- dist/privacy/index.html`:
-#        only the placeholder commit(s) listed), restore the original:
+#    3a. If no newer policy has been approved and dist/privacy/index.html is still the
+#        stub (check with `grep -c noindex dist/privacy/index.html`: prints 1, and
+#        `git log --oneline full-site-before-placeholder..HEAD -- dist/privacy/index.html`
+#        lists only the placeholder PR commits), restore the original:
 git mv -f preserved/full-site/privacy/index.html dist/privacy/index.html
 git diff full-site-before-placeholder -- dist/privacy/index.html   # prints nothing
-#    3b. Otherwise (the policy was updated, e.g. v0.8): skip 3a. Instead copy the
-#        <header class="site-header">…</header> element and the footer's link group
-#        <div><a href="/downloads/">Downloads</a>…<a href="mailto:support@timeheld.app">…</a></div>
-#        from preserved/full-site/privacy/index.html into dist/privacy/index.html,
-#        keep the new policy text, then: git rm preserved/full-site/privacy/index.html
+#    3b. Otherwise (a newer policy, e.g. v0.8, is approved or committed): skip 3a. Build
+#        dist/privacy/index.html from preserved/full-site/privacy/index.html (keep its <head>,
+#        <header class="site-header">…</header> and footer) with the approved policy text in
+#        <main>, make sure it has no noindex/refresh, then:
+#        git rm preserved/full-site/privacy/index.html
 
 # 4. Checks and tests back to the full-site versions.
 git checkout full-site-before-placeholder -- check-site.py \

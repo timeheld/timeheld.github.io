@@ -7,7 +7,7 @@ errors=[]
 preserved=Path(__file__).parent/'preserved'/'full-site'
 preserved_home=preserved/'index.html'
 # Pages hidden behind redirect stubs while the coming-soon placeholder is live.
-STUBS=['downloads/index.html','guide/index.html','releases/index.html','404.html']
+STUBS=['privacy/index.html','downloads/index.html','guide/index.html','releases/index.html','404.html']
 class Page(HTMLParser):
  def __init__(self): super().__init__(); self.links=[]; self.ids=[]; self.main=0; self.title=0
  def handle_starttag(self,tag,attrs):
@@ -47,14 +47,8 @@ for file in list(root.rglob('*.html'))+list(preserved.rglob('*.html')):
 # Coming-soon placeholder at /: logo, "Coming soon" and the support mailto only.
 home=(root/'index.html').read_text()
 if not preserved_home.exists():errors.append('Preserved full homepage missing: preserved/full-site/index.html')
-privacy_path=root/'privacy'/'index.html'
-if not privacy_path.exists():errors.append('dist/privacy/index.html must stay live (Chrome Web Store privacy URL)')
-else:
- privacy=privacy_path.read_text()
- if 'noindex' in privacy or 'http-equiv="refresh"' in privacy or 'location.replace' in privacy:errors.append('Privacy page must stay live and indexable')
- if '<h2 id="contact">Contact</h2>' not in privacy:errors.append('Privacy page lost its contact section')
- for hidden in ['/downloads/','/guide/','/releases/','/#']:
-  if f'href="{hidden}' in privacy:errors.append(f'Privacy page links to hidden page {hidden}')
+preserved_privacy=preserved/'privacy'/'index.html'
+if not preserved_privacy.exists() or '<h2 id="contact">Contact</h2>' not in preserved_privacy.read_text():errors.append('Preserved privacy page missing or lost its contact section')
 # Hidden pages: redirect stubs to / with noindex; originals preserved for restore.
 for rel in STUBS:
  stub=(root/rel).read_text() if (root/rel).exists() else ''
@@ -63,7 +57,7 @@ for rel in STUBS:
  if re.search(r'(?:src|href)="(?!/"|https://timeheld\.app/")[^"]*"',stub):errors.append(f'dist/{rel}: redirect stub must not load resources or link elsewhere')
  if not (preserved/rel).exists():errors.append(f'Preserved original missing: preserved/full-site/{rel}')
 for rel in [p.relative_to(root).as_posix() for p in root.rglob('*.html')]:
- if rel not in STUBS+['index.html','privacy/index.html']:errors.append(f'dist/{rel}: unexpected public page; add it to STUBS or allow it explicitly')
+ if rel not in STUBS+['index.html']:errors.append(f'dist/{rel}: unexpected public page; add it to STUBS or allow it explicitly')
 if re.findall(r'<a\s[^>]*href="([^"]*)"',home)!=['mailto:support@timeheld.app']:errors.append('Placeholder must link only to mailto:support@timeheld.app')
 for tag in ['<nav','<footer','<header','<script','<iframe','<form','http://','https://']:
  if tag in home:errors.append(f'Placeholder must not contain {tag}')

@@ -7,7 +7,7 @@ import { join, relative } from 'node:path';
 const root = new URL('../', import.meta.url).pathname;
 const read = (path) => readFileSync(join(root, path), 'utf8');
 const sha = (path) => createHash('sha256').update(readFileSync(join(root, path))).digest('hex');
-const STUBS = ['downloads/index.html', 'guide/index.html', 'releases/index.html', '404.html'];
+const STUBS = ['privacy/index.html', 'downloads/index.html', 'guide/index.html', 'releases/index.html', '404.html'];
 // sha256 of each page on main 0e955a6 (tag full-site-before-placeholder), before it became a stub.
 const ORIGINALS = {
   'index.html': 'e7ebff1fb21e2781b5bb3307fbe3ce7c84095fce777e0d76f5ced9bf11c337f0',
@@ -37,9 +37,9 @@ for (const page of STUBS) {
   });
 }
 
-test('only /, /privacy/ and the redirect stubs are public HTML pages', () => {
+test('only / is a real public page; everything else is a redirect stub', () => {
   const pages = htmlFiles(join(root, 'dist')).map((file) => relative(join(root, 'dist'), file)).sort();
-  assert.deepEqual(pages, ['index.html', 'privacy/index.html', ...STUBS].sort());
+  assert.deepEqual(pages, ['index.html', ...STUBS].sort());
 });
 
 test('every hidden page and the homepage are preserved byte-for-byte for restore', () => {
@@ -49,13 +49,8 @@ test('every hidden page and the homepage are preserved byte-for-byte for restore
   }
 });
 
-test('/privacy/ stays live and indexable, policy text unchanged, with no links to hidden pages', () => {
-  const live = read('dist/privacy/index.html');
-  const original = read('preserved/full-site/privacy/index.html');
-  for (const marker of ['noindex', 'http-equiv="refresh"', 'location.replace', 'rel="canonical"']) assert.ok(!live.includes(marker), marker);
-  assert.match(live, /<title>Timeheld privacy<\/title>/);
-  const main = (html) => html.match(/<main id="main">[\s\S]*<\/main>/)[0];
-  assert.equal(main(live), main(original));
-  for (const href of ['/downloads/', '/guide/', '/releases/', '/#features', '/#browsers']) assert.ok(!live.includes(`href="${href}"`), href);
-  assert.match(live, /<a href="\/privacy\/">Privacy<\/a><a href="mailto:support@timeheld\.app">support@timeheld\.app<\/a>/);
+test('preserved privacy original keeps its title and contact section', () => {
+  const html = read('preserved/full-site/privacy/index.html');
+  assert.match(html, /<title>Timeheld privacy<\/title>/);
+  assert.match(html, /<h2 id="contact">Contact<\/h2>/);
 });

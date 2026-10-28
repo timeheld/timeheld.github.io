@@ -13,11 +13,10 @@ http://127.0.0.1:4318. No dependency installation or build step is required.
 `/` currently serves a minimal placeholder (`dist/index.html`): the Timeheld logo,
 "Coming soon" and a `mailto:support@timeheld.app` link. Nothing else. The full
 homepage is preserved unchanged at `preserved/full-site/index.html` (not deployed).
-`/privacy/` stays live and indexable because it is the Chrome Web Store privacy URL; its
-policy text is unchanged, but its header nav and footer links to hidden pages were removed.
-`/downloads/`, `/guide/`, `/releases/` and `404.html` are noindex redirect stubs to `/`;
-their originals are preserved unchanged in `preserved/full-site/` (as is the original
-privacy page with its full header and footer). Tag `full-site-before-placeholder` marks the pre-placeholder state. See `RESTORE-FULL-SITE.md` to restore at launch.
+`/privacy/`, `/downloads/`, `/guide/`, `/releases/` and `404.html` are noindex redirect
+stubs to `/`; their originals are preserved unchanged in `preserved/full-site/`. Note that
+`/privacy/` is the Chrome Web Store privacy URL: restore it before any store submission.
+Tag `full-site-before-placeholder` marks the pre-placeholder state. See `RESTORE-FULL-SITE.md` to restore at launch.
 The placeholder uses a self-hosted Basic Latin subset of Inter
 (`dist/assets/fonts/`, SIL OFL 1.1, licence alongside). It makes no external requests.
 

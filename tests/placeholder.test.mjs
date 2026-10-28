@@ -39,12 +39,6 @@ test('placeholder assets exist and the logo is the final light lockup for dark b
   assert.match(read('dist/assets/wordmark-light.svg'), /fill="#F3F4F6"[\s\S]*fill="#1ED760"/);
 });
 
-test('privacy page stays live with its contact section', () => {
-  const privacy = read('dist/privacy/index.html');
-  assert.match(privacy, /<title>Timeheld privacy<\/title>/);
-  assert.match(privacy, /<h2 id="contact">Contact<\/h2>/);
-});
-
 test('full homepage is preserved byte-for-byte for restore', () => {
   const sha = createHash('sha256').update(readFileSync(new URL('preserved/full-site/index.html', root))).digest('hex');
   assert.equal(sha, 'e7ebff1fb21e2781b5bb3307fbe3ce7c84095fce777e0d76f5ced9bf11c337f0');
