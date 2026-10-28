@@ -11,7 +11,9 @@ http://127.0.0.1:4318. No dependency installation or build step is required.
 ## Coming-soon placeholder
 
 `/` currently serves a minimal placeholder (`dist/index.html`): the Timeheld logo,
-"Coming soon" and a `mailto:support@timeheld.app` link. Nothing else. The full
+"Coming soon", a `mailto:support@timeheld.app` link and a "Follow @timeheld.app on
+Instagram for announcements" line (https://www.instagram.com/timeheld.app/, new tab,
+`rel="noopener noreferrer"`, inline SVG glyph). Nothing else. The full
 homepage is preserved unchanged at `preserved/full-site/index.html` (not deployed).
 `/privacy/` is live: the Timeheld Beta Privacy Policy v1.2 (`dist/privacy/index.html`,
 indexable, wording pinned by `tests/privacy-policy.test.mjs`). `/downloads/`, `/guide/`,

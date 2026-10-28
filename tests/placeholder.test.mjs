@@ -7,25 +7,30 @@ const root = new URL('../', import.meta.url);
 const read = (path) => readFileSync(new URL(path, root), 'utf8');
 const home = read('dist/index.html');
 const body = home.match(/<body>([\s\S]*)<\/body>/)[1];
+const INSTAGRAM_URL = 'https://www.instagram.com/timeheld.app/';
+const INSTAGRAM_LINK = `<a href="${INSTAGRAM_URL}" target="_blank" rel="noopener noreferrer">`;
 
-test('placeholder shows only the logo, then "Coming soon", then the support mailto', () => {
+test('placeholder shows only the logo, then "Coming soon", the support mailto and the Instagram follow line', () => {
   const main = body.match(/^\s*<main[^>]*>([\s\S]*)<\/main>\s*$/);
   assert.ok(main, 'body contains only <main>');
   const elements = [...main[1].matchAll(/<(img|h1|p|a)\b[^>]*>/g)].map((m) => m[0]);
-  assert.equal(elements.length, 4);
+  assert.equal(elements.length, 6);
   assert.match(elements[0], /^<img class="placeholder-logo" src="\/assets\/wordmark-light\.svg"[^>]* alt="Timeheld">$/);
   assert.equal(elements[1], '<h1>');
   assert.equal(elements[2], '<p class="placeholder-contact">');
   assert.equal(elements[3], '<a href="mailto:support@timeheld.app">');
+  assert.equal(elements[4], '<p class="placeholder-social">');
+  assert.equal(elements[5], INSTAGRAM_LINK);
   const text = main[1].replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-  assert.equal(text, 'Coming soon support@timeheld.app');
+  assert.equal(text, 'Coming soon support@timeheld.app Follow @timeheld.app on Instagram for announcements');
 });
 
 test('placeholder has no nav, footer, scripts, other links or external requests', () => {
-  for (const tag of ['<nav', '<header', '<footer', '<script', '<iframe', '<form', 'http://', 'https://']) {
+  for (const tag of ['<nav', '<header', '<footer', '<script', '<iframe', '<form', 'http://']) {
     assert.ok(!home.includes(tag), tag);
   }
-  assert.deepEqual([...home.matchAll(/<a\s[^>]*href="([^"]*)"/g)].map((m) => m[1]), ['mailto:support@timeheld.app']);
+  assert.deepEqual([...home.matchAll(/<a\s[^>]*href="([^"]*)"/g)].map((m) => m[1]), ['mailto:support@timeheld.app', INSTAGRAM_URL]);
+  assert.deepEqual(home.match(/https?:\/\/[^"\s<>]*/g), [INSTAGRAM_URL], 'the Instagram profile is the only external URL');
   assert.match(home, /<title>Timeheld — Coming soon<\/title>/);
   assert.match(home, /<meta name="description" content="[^"]+">/);
   assert.match(home, /<link rel="icon" type="image\/png" href="\/assets\/favicon\.png">/);
@@ -48,4 +53,21 @@ test('shared full-site assets remain in dist for restore', () => {
   for (const path of ['dist/site.js', 'dist/styles.css', 'dist/demo-clock.mjs', 'dist/assets/wordmark-dark.svg', 'dist/assets/analytics-preview.png', 'dist/assets/mark.svg']) {
     assert.ok(existsSync(new URL(path, root)), path);
   }
+});
+
+test('Instagram follow line opens the profile in a new tab with noopener noreferrer and loads nothing external', () => {
+  const links = [...home.matchAll(/<a\s([^>]*)>([\s\S]*?)<\/a>/g)].filter((m) => m[1].includes('instagram.com'));
+  assert.equal(links.length, 1);
+  const attrs = Object.fromEntries([...links[0][1].matchAll(/([a-z-]+)="([^"]*)"/g)].map((m) => [m[1], m[2]]));
+  assert.deepEqual(attrs, { href: INSTAGRAM_URL, target: '_blank', rel: 'noopener noreferrer' });
+  assert.equal(links[0][2].replace(/<[^>]+>/g, '').trim(), 'Follow @timeheld.app on Instagram for announcements');
+  // Glyph is inline SVG only: decorative, no external image, script, font or tracker.
+  assert.match(links[0][2], /^<svg viewBox="0 0 24 24"[^>]* aria-hidden="true" focusable="false">/);
+  assert.ok(!/<(script|img|image|use|iframe|object|embed|link)\b/i.test(links[0][2]));
+  assert.ok(!/<script\b/i.test(home), 'no script on the placeholder');
+  assert.ok(!/<link\s[^>]*rel="stylesheet"/i.test(home), 'no external stylesheet');
+  for (const m of home.matchAll(/(?:src|href)="([^"]*)"/g)) {
+    assert.ok(m[1].startsWith('/') || m[1].startsWith('mailto:') || m[1] === INSTAGRAM_URL, m[1]);
+  }
+  assert.ok(!/url\(\s*["']?https?:/i.test(home), 'no external CSS resources');
 });
