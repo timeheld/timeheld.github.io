@@ -70,8 +70,12 @@ if re.findall(r'(?:src|href)="(https?://[^"]*)"',priv)!=['https://timeheld.app/p
 if not (preserved/LIVE_PRIVACY).exists():errors.append(f'Preserved original missing: preserved/full-site/{LIVE_PRIVACY}')
 for rel in [p.relative_to(root).as_posix() for p in root.rglob('*.html')]:
  if rel not in STUBS+['index.html',LIVE_PRIVACY]:errors.append(f'dist/{rel}: unexpected public page; add it to STUBS or allow it explicitly')
-if re.findall(r'<a\s[^>]*href="([^"]*)"',home)!=['mailto:support@timeheld.app']:errors.append('Placeholder must link only to mailto:support@timeheld.app')
-for tag in ['<nav','<footer','<header','<script','<iframe','<form','http://','https://']:
+# The one approved external link: the Instagram follow line (new tab, no opener/referrer).
+INSTAGRAM='<a href="https://www.instagram.com/timeheld.app/" target="_blank" rel="noopener noreferrer">'
+if re.findall(r'<a\s[^>]*href="([^"]*)"',home)!=['mailto:support@timeheld.app','https://www.instagram.com/timeheld.app/']:errors.append('Placeholder must link only to mailto:support@timeheld.app and the Instagram profile')
+if home.count(INSTAGRAM)!=1:errors.append('Placeholder Instagram link must be exactly '+INSTAGRAM)
+if re.findall(r'https?://[^"\s<>]*',home)!=['https://www.instagram.com/timeheld.app/']:errors.append('Placeholder may reference only the Instagram profile URL externally')
+for tag in ['<nav','<footer','<header','<script','<iframe','<form','http://','<link rel="stylesheet"']:
  if tag in home:errors.append(f'Placeholder must not contain {tag}')
 ALLOWED_EMAILS={'support@timeheld.app'}
 for file in list(root.rglob('*'))+list(preserved.rglob('*')):
