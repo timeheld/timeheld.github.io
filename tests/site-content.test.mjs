@@ -16,9 +16,15 @@ const text = (html) => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
 
 test('public pages contain no unpacked, temporary or developer-mode install steps', () => {
   const forbidden = [/chrome:\/\/extensions/i, /edge:\/\/extensions/i, /about:debugging/i, /load unpacked/i, /load temporary add-on/i, /developer mode/i, /build\/(chrome|edge|firefox)/i, /invited (mac )?testers/i, /testing preview/i, /preview setup/i];
+  // The live privacy policy (approved v1.2 wording, published verbatim) says the beta is "only for
+  // invited testers"; that describes eligibility, not install steps, so only that pattern is exempt there.
+  const livePrivacy = join(dist, 'privacy/index.html');
   for (const file of [...htmlFiles(), ...htmlFiles(preserved)]) {
     const html = readFileSync(file, 'utf8');
-    for (const pattern of forbidden) assert.doesNotMatch(html, pattern, `${file} matches ${pattern}`);
+    for (const pattern of forbidden) {
+      if (file === livePrivacy && String(pattern) === String(/invited (mac )?testers/i)) continue;
+      assert.doesNotMatch(html, pattern, `${file} matches ${pattern}`);
+    }
   }
 });
 
