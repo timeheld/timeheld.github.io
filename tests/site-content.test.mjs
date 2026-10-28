@@ -4,7 +4,9 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 const dist = new URL('../dist/', import.meta.url).pathname;
-const read = (path) => readFileSync(join(dist, path), 'utf8');
+const preserved = new URL('../preserved/full-site/', import.meta.url).pathname;
+// /downloads/ and /guide/ are redirect stubs while the placeholder is live; check the preserved originals.
+const read = (path) => readFileSync(join(preserved, path), 'utf8');
 const htmlFiles = (dir = dist) => readdirSync(dir).flatMap((name) => {
   const path = join(dir, name);
   if (statSync(path).isDirectory()) return htmlFiles(path);
@@ -14,7 +16,7 @@ const text = (html) => html.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ');
 
 test('public pages contain no unpacked, temporary or developer-mode install steps', () => {
   const forbidden = [/chrome:\/\/extensions/i, /edge:\/\/extensions/i, /about:debugging/i, /load unpacked/i, /load temporary add-on/i, /developer mode/i, /build\/(chrome|edge|firefox)/i, /invited (mac )?testers/i, /testing preview/i, /preview setup/i];
-  for (const file of htmlFiles()) {
+  for (const file of [...htmlFiles(), ...htmlFiles(preserved)]) {
     const html = readFileSync(file, 'utf8');
     for (const pattern of forbidden) assert.doesNotMatch(html, pattern, `${file} matches ${pattern}`);
   }
@@ -47,7 +49,7 @@ test('guide keeps browser anchors and marks each browser under development', () 
 
 test('no browser store listing URLs are published', () => {
   const stores = [/chromewebstore\.google\.com/i, /chrome\.google\.com\/webstore/i, /microsoftedge\.microsoft\.com\/addons/i, /addons\.mozilla\.org/i];
-  for (const file of htmlFiles()) {
+  for (const file of [...htmlFiles(), ...htmlFiles(preserved)]) {
     const html = readFileSync(file, 'utf8');
     for (const pattern of stores) assert.doesNotMatch(html, pattern, `${file} matches ${pattern}`);
   }

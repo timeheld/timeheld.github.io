@@ -50,8 +50,8 @@ test('full homepage is preserved byte-for-byte for restore', () => {
   assert.equal(sha, 'e7ebff1fb21e2781b5bb3307fbe3ce7c84095fce777e0d76f5ced9bf11c337f0');
 });
 
-test('parked full-site pages remain in dist', () => {
-  for (const path of ['dist/downloads/index.html', 'dist/guide/index.html', 'dist/releases/index.html', 'dist/404.html', 'dist/site.js', 'dist/styles.css', 'dist/demo-clock.mjs']) {
+test('shared full-site assets remain in dist for restore', () => {
+  for (const path of ['dist/site.js', 'dist/styles.css', 'dist/demo-clock.mjs', 'dist/assets/wordmark-dark.svg', 'dist/assets/analytics-preview.png', 'dist/assets/mark.svg']) {
     assert.ok(existsSync(new URL(path, root)), path);
   }
 });
