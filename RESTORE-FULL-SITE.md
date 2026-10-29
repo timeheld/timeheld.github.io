@@ -2,8 +2,8 @@
 
 While the coming-soon placeholder is live, two real pages are public:
 `/` (`dist/index.html`) shows only the Timeheld logo, "Coming soon" and `support@timeheld.app`, and
-`/privacy/` (`dist/privacy/index.html`) is the live, indexable **Timeheld Beta Privacy Policy v1.2**
-(effective October 28, 2026), published with JK's approved wording verbatim
+`/privacy/` (`dist/privacy/index.html`) is the live, indexable **Timeheld Beta Privacy Policy v1.3**
+(effective October 29, 2026), published with JK's approved wording verbatim
 (`tests/privacy-policy.test.mjs` pins its text).
 
 Every other page is a redirect stub to `/` (meta refresh + `location.replace('/')`,
@@ -20,7 +20,7 @@ Also preserved:
 
 - `preserved/full-site/index.html`: the full homepage.
 - `preserved/full-site/privacy/index.html`: the old October 25, 2026 privacy page (superseded by the
-  live v1.2 policy; kept for its header/footer markup only).
+  live v1.3 policy; kept for its header/footer markup only).
 
 Every preserved file is byte-for-byte identical to `main` before the placeholder;
 `tests/redirect-stubs.test.mjs` pins their sha256. `preserved/` is outside `dist/`, so it is
@@ -28,9 +28,9 @@ not deployed. `dist/site.js`, `dist/demo-clock.mjs`, `dist/styles.css` and all a
 are unchanged. The git tag `full-site-before-placeholder` marks `main` exactly as it was
 before the placeholder (commit `0e955a6`, the PR #4 merge).
 
-**Privacy caution:** `/privacy/` now serves the approved Beta Privacy Policy v1.2. Do **not**
+**Privacy caution:** `/privacy/` now serves the approved Beta Privacy Policy v1.3. Do **not**
 restore `preserved/full-site/privacy/index.html` over it (that would roll the policy back): in
-Option B always use step 3b and keep the v1.2 wording. `/privacy/` is also the Chrome Web Store
+Option B always use step 3b and keep the v1.3 wording. `/privacy/` is also the Chrome Web Store
 privacy URL; check the live policy still fits before any store submission. Option A (revert)
 would also revert `/privacy/` to a stub and is no longer suitable unless `dist/privacy/index.html`
 is kept from `main` afterwards.
