@@ -7,6 +7,7 @@ const dist = new URL('../dist/', import.meta.url).pathname;
 const preserved = new URL('../preserved/full-site/', import.meta.url).pathname;
 const STUBS = ['downloads/index.html', 'guide/index.html', 'releases/index.html', '404.html'].map((p) => join(dist, p));
 const LIVE_PRIVACY = join(dist, 'privacy/index.html');
+const WEBSITE_NOTICE = join(dist, 'privacy/website/index.html');
 const SUPPORT = 'support@timeheld.app';
 const files = (dir = dist) => readdirSync(dir).flatMap((name) => {
   const path = join(dir, name);
@@ -17,10 +18,11 @@ const textFiles = [...files(), ...files(preserved)].filter((file) => ['.html', '
 
 test('every page footer links to the support mailto', () => {
   assert.ok(htmlFiles.length >= 6);
-  // The placeholder at /, the redirect stubs and the live privacy policy have no footer
-  // (tests/placeholder.test.mjs, tests/redirect-stubs.test.mjs and tests/privacy-policy.test.mjs
-  // cover them); the preserved full-site pages keep theirs.
-  const pages = [...htmlFiles.filter((path) => path !== join(dist, 'index.html') && path !== LIVE_PRIVACY && !STUBS.includes(path)),
+  // The placeholder at /, the redirect stubs, the live privacy policy and the website privacy notice
+  // have no site-footer (tests/placeholder.test.mjs, tests/redirect-stubs.test.mjs,
+  // tests/privacy-policy.test.mjs and tests/website-privacy-notice.test.mjs cover them); the
+  // preserved full-site pages keep theirs.
+  const pages = [...htmlFiles.filter((path) => path !== join(dist, 'index.html') && path !== LIVE_PRIVACY && path !== WEBSITE_NOTICE && !STUBS.includes(path)),
     ...files(preserved).filter((file) => file.endsWith('.html') && file !== join(preserved, 'index.html'))];
   assert.equal(pages.length, 5);
   for (const file of pages) {
@@ -37,6 +39,10 @@ test('preserved privacy page keeps its contact line with the support mailto', ()
 
 test('live privacy policy links the support mailto', () => {
   assert.match(readFileSync(LIVE_PRIVACY, 'utf8'), new RegExp(`<a href="mailto:${SUPPORT}">${SUPPORT}</a>`));
+});
+
+test('website privacy notice links the support mailto', () => {
+  assert.match(readFileSync(WEBSITE_NOTICE, 'utf8'), new RegExp(`<a href="mailto:${SUPPORT}">${SUPPORT}</a>`));
 });
 
 test('no email address other than the approved support contact appears', () => {

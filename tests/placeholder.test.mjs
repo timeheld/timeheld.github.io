@@ -11,8 +11,8 @@ const INSTAGRAM_URL = 'https://www.instagram.com/timeheld.app/';
 const INSTAGRAM_LINK = `<a href="${INSTAGRAM_URL}" target="_blank" rel="noopener noreferrer">`;
 
 test('placeholder shows only the logo, then "Coming soon", the support mailto and the Instagram follow line', () => {
-  const main = body.match(/^\s*<main[^>]*>([\s\S]*)<\/main>\s*$/);
-  assert.ok(main, 'body contains only <main>');
+  const main = body.match(/^\s*<main[^>]*>([\s\S]*)<\/main>\s*<footer class="site-legal"><a href="\/privacy\/website\/">Website privacy<\/a><\/footer>\s*$/);
+  assert.ok(main, 'body contains only <main> and the Website privacy footer');
   const elements = [...main[1].matchAll(/<(img|h1|p|a)\b[^>]*>/g)].map((m) => m[0]);
   assert.equal(elements.length, 6);
   assert.match(elements[0], /^<img class="placeholder-logo" src="\/assets\/wordmark-light\.svg"[^>]* alt="Timeheld">$/);
@@ -25,11 +25,12 @@ test('placeholder shows only the logo, then "Coming soon", the support mailto an
   assert.equal(text, 'Coming soon support@timeheld.app Follow @timeheld.app on Instagram for announcements');
 });
 
-test('placeholder has no nav, footer, scripts, other links or external requests', () => {
-  for (const tag of ['<nav', '<header', '<footer', '<script', '<iframe', '<form', 'http://']) {
+test('placeholder has no nav, scripts, other links or external requests; its only footer is the Website privacy link', () => {
+  assert.equal((home.match(/<footer\b/g) ?? []).length, 1);
+  for (const tag of ['<nav', '<header', '<script', '<iframe', '<form', 'http://']) {
     assert.ok(!home.includes(tag), tag);
   }
-  assert.deepEqual([...home.matchAll(/<a\s[^>]*href="([^"]*)"/g)].map((m) => m[1]), ['mailto:support@timeheld.app', INSTAGRAM_URL]);
+  assert.deepEqual([...home.matchAll(/<a\s[^>]*href="([^"]*)"/g)].map((m) => m[1]), ['mailto:support@timeheld.app', INSTAGRAM_URL, '/privacy/website/']);
   assert.deepEqual(home.match(/https?:\/\/[^"\s<>]*/g), [INSTAGRAM_URL], 'the Instagram profile is the only external URL');
   assert.match(home, /<title>Timeheld — Coming soon<\/title>/);
   assert.match(home, /<meta name="description" content="[^"]+">/);

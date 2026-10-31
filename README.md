@@ -13,10 +13,14 @@ http://127.0.0.1:4318. No dependency installation or build step is required.
 `/` currently serves a minimal placeholder (`dist/index.html`): the Timeheld logo,
 "Coming soon", a `mailto:support@timeheld.app` link and a "Follow @timeheld.app on
 Instagram for announcements" line (https://www.instagram.com/timeheld.app/, new tab,
-`rel="noopener noreferrer"`, inline SVG glyph). Nothing else. The full
+`rel="noopener noreferrer"`, inline SVG glyph), plus a `Website privacy` footer link to
+`/privacy/website/`. Nothing else. The full
 homepage is preserved unchanged at `preserved/full-site/index.html` (not deployed).
-`/privacy/` is live: the Timeheld Beta Privacy Policy v1.4 (`dist/privacy/index.html`,
-indexable, wording pinned by `tests/privacy-policy.test.mjs`). `/downloads/`, `/guide/`,
+`/privacy/` is live: the Timeheld Beta Privacy Policy v1.5 (`dist/privacy/index.html`,
+indexable, wording pinned by `tests/privacy-policy.test.mjs`). `/privacy/website/` is live:
+the Timeheld Website Privacy Notice v1.0 (`dist/privacy/website/index.html`, indexable, wording
+pinned by `tests/website-privacy-notice.test.mjs`). The placeholder and `/privacy/` carry a small
+`Website privacy` footer link to it. `/downloads/`, `/guide/`,
 `/releases/` and `404.html` are noindex redirect stubs to `/`; their originals (and the old
 privacy page) are preserved unchanged in `preserved/full-site/`.
 Tag `full-site-before-placeholder` marks the pre-placeholder state. See `RESTORE-FULL-SITE.md` to restore at launch.
