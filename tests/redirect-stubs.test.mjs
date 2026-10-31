@@ -7,7 +7,8 @@ import { join, relative } from 'node:path';
 const root = new URL('../', import.meta.url).pathname;
 const read = (path) => readFileSync(join(root, path), 'utf8');
 const sha = (path) => createHash('sha256').update(readFileSync(join(root, path))).digest('hex');
-// /privacy/ is live (Timeheld Beta Privacy Policy v1.2); tests/privacy-policy.test.mjs covers it.
+// /privacy/ is live (Timeheld Beta Privacy Policy v1.5); tests/privacy-policy.test.mjs covers it.
+// /privacy/website/ is live (Timeheld Website Privacy Notice v1.0); tests/website-privacy-notice.test.mjs covers it.
 const STUBS = ['downloads/index.html', 'guide/index.html', 'releases/index.html', '404.html'];
 // sha256 of each page on main 0e955a6 (tag full-site-before-placeholder), before it became a stub.
 const ORIGINALS = {
@@ -38,9 +39,9 @@ for (const page of STUBS) {
   });
 }
 
-test('only / and /privacy/ are real public pages; everything else is a redirect stub', () => {
+test('only /, /privacy/ and /privacy/website/ are real public pages; everything else is a redirect stub', () => {
   const pages = htmlFiles(join(root, 'dist')).map((file) => relative(join(root, 'dist'), file)).sort();
-  assert.deepEqual(pages, ['index.html', 'privacy/index.html', ...STUBS].sort());
+  assert.deepEqual(pages, ['index.html', 'privacy/index.html', 'privacy/website/index.html', ...STUBS].sort());
 });
 
 test('every hidden page and the homepage are preserved byte-for-byte for restore', () => {

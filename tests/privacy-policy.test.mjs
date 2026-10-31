@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 
-// /privacy/ is live: the Timeheld Beta Privacy Policy v1.4 (effective October 30, 2026), approved by
+// /privacy/ is live: the Timeheld Beta Privacy Policy v1.5 (effective October 31, 2026), approved by
 // JK for publication with the wording exactly as written. Only the markdown structure was converted.
 const html = readFileSync(new URL('../dist/privacy/index.html', import.meta.url), 'utf8');
 const article = html.match(/<article>([\s\S]*)<\/article>/)?.[1] ?? '';
@@ -35,24 +35,37 @@ test('privacy page uses the placeholder look: black, Inter, green accents, logo 
   assert.deepEqual([...html.matchAll(/(?:src|href)="(https?:[^"]*)"/g)].map((m) => m[1]), ['https://timeheld.app/privacy/']);
 });
 
-test('privacy page carries the v1.4 policy, all ten sections, and no draft label', () => {
+test('privacy page carries the v1.5 policy, all ten sections, and no draft label', () => {
   assert.ok(!/draft/i.test(html), 'no Draft label');
   assert.match(html, /<h1>Timeheld Beta Privacy Policy<\/h1>/);
-  assert.match(policyText, /^Timeheld Beta Privacy Policy Version 1\.4 Effective date October 30, 2026 Covers The Timeheld private beta distributed through Apple TestFlight only 1\. Who we are /);
+  assert.match(policyText, /^Timeheld Beta Privacy Policy Version 1\.5 Effective date October 31, 2026 Covers The Timeheld private beta distributed through Apple TestFlight only 1\. Who we are /);
   const sections = [...article.matchAll(/<h2 id="section-(\d+)">([^<]+)<\/h2>/g)].map((m) => m[2]);
   assert.deepEqual(sections, ['1. Who we are', '2. What this policy covers', '3. What Apple collects through TestFlight',
     '4. What the beta app uses, and where it goes', '5. Why we use it and our legal basis', '6. Who we share it with',
     '7. International transfers', '8. How long we keep it', '9. Your rights', '10. Security, changes and contact']);
-  assert.match(policyText, / Questions: support@timeheld\.app\. Changes from version 1\.3: we shortened the description of how the app works with Apple services in section 4\. Nothing else changed\.$/);
+  assert.match(policyText, / Questions: support@timeheld\.app\. Changes from version 1\.4: Cloudflare has replaced Namecheap as the service that forwards email sent to support@timeheld\.app, and it also hosts the timeheld\.app website \(sections 6 and 7\)\. Nothing else changed\.$/);
+  assert.match(policyText, / and Cloudflare \(email forwarding for support@timeheld\.app and hosting of the timeheld\.app website\), plus authorities /);
+  assert.match(policyText, /our providers \(Apple, Supabase, Google and Cloudflare\) may process/);
   assert.ok(!policyText.includes('any earlier project'), 'v1.2 Other records wording removed');
   assert.ok(!policyText.includes('section 5.2 of the agreement'), 'v1.2 retention wording removed');
   assert.ok(!policyText.includes('Live Activit'), 'v1.3 Notifications and Live Activities bullet removed');
   assert.ok(!html.includes('Live Activit'), 'no Live Activit text anywhere on the page');
   assert.ok(!policyText.includes('Notifications and Live Activities'), 'v1.3 section 4 bullet removed');
   assert.ok(!policyText.includes('Changes from version 1.2'), 'v1.3 closing note replaced');
+  assert.ok(!policyText.includes('Changes from version 1.3'), 'v1.4 closing note replaced');
+  assert.ok(!policyText.includes('Namecheap (email forwarding'), 'v1.4 Namecheap provider entry replaced');
+  assert.ok(!policyText.includes('Google and Namecheap'), 'v1.4 Namecheap transfer mention replaced');
+  assert.equal((policyText.match(/Namecheap/g) ?? []).length, 1, 'Namecheap is named only in the changes note');
 });
 
 test('privacy policy wording is pinned exactly as approved', () => {
   // sha256 of the whitespace-normalized article text. Any wording change must be re-approved.
-  assert.equal(createHash('sha256').update(policyText).digest('hex'), '4cf7f94d9e24f322a357610043a62bb67441d948fc49da00656308e19c4972f3');
+  assert.equal(createHash('sha256').update(policyText).digest('hex'), 'c264267a9ff208205b5c83f0a2da6c08696fc9104eb1fbd91246b418c52f7ff0');
+});
+
+test('privacy page footer links to the website privacy notice', () => {
+  const body = html.match(/<body>([\s\S]*)<\/body>/)[1];
+  assert.match(body, /<\/main>\s*<footer class="site-legal"><a href="\/privacy\/website\/">Website privacy<\/a><\/footer>\s*$/);
+  assert.equal((html.match(/<footer\b/g) ?? []).length, 1);
+  assert.match(html, /\.site-legal a:focus-visible \{ outline: 2px solid #1ed760;/);
 });

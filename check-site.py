@@ -8,8 +8,11 @@ preserved=Path(__file__).parent/'preserved'/'full-site'
 preserved_home=preserved/'index.html'
 # Pages hidden behind redirect stubs while the coming-soon placeholder is live.
 STUBS=['downloads/index.html','guide/index.html','releases/index.html','404.html']
-# /privacy/ is live: the approved Timeheld Beta Privacy Policy v1.4 (indexable, no redirect).
+# /privacy/ is live: the approved Timeheld Beta Privacy Policy v1.5 (indexable, no redirect).
 LIVE_PRIVACY='privacy/index.html'
+# /privacy/website/ is live: the approved Timeheld Website Privacy Notice v1.0 (indexable, no redirect, new page).
+LIVE_NOTICE='privacy/website/index.html'
+LEGAL_FOOTER='<footer class="site-legal"><a href="/privacy/website/">Website privacy</a></footer>'
 # Every page whose pre-placeholder original is preserved in preserved/full-site/.
 PRESERVED_PAGES=STUBS+[LIVE_PRIVACY]
 class Page(HTMLParser):
@@ -48,7 +51,7 @@ for file in list(root.rglob('*.html'))+list(preserved.rglob('*.html')):
    p=Page();p.feed(target.read_text())
    if u.fragment not in p.ids:errors.append(f'{file}: missing anchor {link}')
  if re.search(r'href=[\"\'][^\"\']*\.(zip|dmg|pkg)([\"\'?#])',text):errors.append(f'{file}: forbidden app-download link')
-# Coming-soon placeholder at /: logo, "Coming soon" and the support mailto only.
+# Coming-soon placeholder at /: logo, "Coming soon", the support mailto, the Instagram line and the Website privacy footer only.
 home=(root/'index.html').read_text()
 if not preserved_home.exists():errors.append('Preserved full homepage missing: preserved/full-site/index.html')
 preserved_privacy=preserved/'privacy'/'index.html'
@@ -62,20 +65,28 @@ for rel in STUBS:
  if not (preserved/rel).exists():errors.append(f'Preserved original missing: preserved/full-site/{rel}')
 # Live privacy policy: indexable, canonical, no redirect, no scripts or external requests.
 priv=(root/LIVE_PRIVACY).read_text() if (root/LIVE_PRIVACY).exists() else ''
-for need in ['<title>Timeheld Beta Privacy Policy — Timeheld</title>','<link rel="canonical" href="https://timeheld.app/privacy/">','<meta name="description" content="','<h1>Timeheld Beta Privacy Policy</h1>','<dd>1.4</dd>','src="/assets/wordmark-light.svg"']:
+for need in ['<title>Timeheld Beta Privacy Policy — Timeheld</title>','<link rel="canonical" href="https://timeheld.app/privacy/">','<meta name="description" content="','<h1>Timeheld Beta Privacy Policy</h1>','<dd>1.5</dd>','src="/assets/wordmark-light.svg"',LEGAL_FOOTER]:
  if need not in priv:errors.append(f'dist/{LIVE_PRIVACY}: live policy page missing {need}')
 for bad in ['noindex','http-equiv="refresh"','location.replace','<script','<iframe','<form','http://','Draft','DRAFT']:
  if bad in priv:errors.append(f'dist/{LIVE_PRIVACY}: live policy page must not contain {bad}')
 if re.findall(r'(?:src|href)="(https?://[^"]*)"',priv)!=['https://timeheld.app/privacy/']:errors.append(f'dist/{LIVE_PRIVACY}: only the canonical URL may be absolute')
 if not (preserved/LIVE_PRIVACY).exists():errors.append(f'Preserved original missing: preserved/full-site/{LIVE_PRIVACY}')
+# Live website privacy notice: indexable, own canonical, no redirect, no scripts or external requests.
+notice=(root/LIVE_NOTICE).read_text() if (root/LIVE_NOTICE).exists() else ''
+for need in ['<title>Timeheld Website Privacy Notice</title>','<link rel="canonical" href="https://timeheld.app/privacy/website/">','<meta name="description" content="','<h1>Timeheld Website Privacy Notice</h1>','<dd>1.0</dd>','src="/assets/wordmark-light.svg"','<a href="mailto:support@timeheld.app">']:
+ if need not in notice:errors.append(f'dist/{LIVE_NOTICE}: website notice page missing {need}')
+for bad in ['noindex','http-equiv="refresh"','location.replace','<script','<iframe','<form','http://','Draft','DRAFT']:
+ if bad in notice:errors.append(f'dist/{LIVE_NOTICE}: website notice page must not contain {bad}')
+if re.findall(r'(?:src|href)="(https?://[^"]*)"',notice)!=['https://timeheld.app/privacy/website/']:errors.append(f'dist/{LIVE_NOTICE}: only the canonical URL may be absolute')
 for rel in [p.relative_to(root).as_posix() for p in root.rglob('*.html')]:
- if rel not in STUBS+['index.html',LIVE_PRIVACY]:errors.append(f'dist/{rel}: unexpected public page; add it to STUBS or allow it explicitly')
+ if rel not in STUBS+['index.html',LIVE_PRIVACY,LIVE_NOTICE]:errors.append(f'dist/{rel}: unexpected public page; add it to STUBS or allow it explicitly')
 # The one approved external link: the Instagram follow line (new tab, no opener/referrer).
 INSTAGRAM='<a href="https://www.instagram.com/timeheld.app/" target="_blank" rel="noopener noreferrer">'
-if re.findall(r'<a\s[^>]*href="([^"]*)"',home)!=['mailto:support@timeheld.app','https://www.instagram.com/timeheld.app/']:errors.append('Placeholder must link only to mailto:support@timeheld.app and the Instagram profile')
+if re.findall(r'<a\s[^>]*href="([^"]*)"',home)!=['mailto:support@timeheld.app','https://www.instagram.com/timeheld.app/','/privacy/website/']:errors.append('Placeholder must link only to mailto:support@timeheld.app, the Instagram profile and /privacy/website/')
+if home.count('<footer')!=1 or LEGAL_FOOTER not in home:errors.append('Placeholder must have exactly one footer: '+LEGAL_FOOTER)
 if home.count(INSTAGRAM)!=1:errors.append('Placeholder Instagram link must be exactly '+INSTAGRAM)
 if re.findall(r'https?://[^"\s<>]*',home)!=['https://www.instagram.com/timeheld.app/']:errors.append('Placeholder may reference only the Instagram profile URL externally')
-for tag in ['<nav','<footer','<header','<script','<iframe','<form','http://','<link rel="stylesheet"']:
+for tag in ['<nav','<header','<script','<iframe','<form','http://','<link rel="stylesheet"']:
  if tag in home:errors.append(f'Placeholder must not contain {tag}')
 ALLOWED_EMAILS={'support@timeheld.app'}
 for file in list(root.rglob('*'))+list(preserved.rglob('*')):
@@ -86,4 +97,4 @@ for file in root.rglob('*'):
  if file.is_file() and file.suffix.lower() in ['.zip','.dmg','.pkg','.mobileprovision','.provisionprofile','.p8','.p12','.pem']:
   errors.append(f'Forbidden distributable or sensitive file: {file}')
 assert not errors, '\n'.join(errors)
-print(f'Passed: {len(list(root.rglob("*.html")))} public pages (placeholder, live privacy policy v1.4, {len(STUBS)} redirect stubs) + {len(list(preserved.rglob("*.html")))} preserved pages, all local links/anchors, landmarks, alt text; no app binary downloads, sensitive files or unapproved email addresses.')
+print(f'Passed: {len(list(root.rglob("*.html")))} public pages (placeholder, live privacy policy v1.5, website privacy notice v1.0, {len(STUBS)} redirect stubs) + {len(list(preserved.rglob("*.html")))} preserved pages, all local links/anchors, landmarks, alt text; no app binary downloads, sensitive files or unapproved email addresses.')

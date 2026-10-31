@@ -37,6 +37,10 @@ a:focus-visible { outline: 2px solid #1ed760; outline-offset: 3px; border-radius
 .policy-meta dt { color: #9ca3af; }
 .policy-meta dd { margin: 0; color: #f3f4f6; }
 @media (max-width: 520px) { body { font-size: 16px; } main { padding: 32px 20px 72px; } .policy-meta div { grid-template-columns: 1fr; gap: 0; } h2 { font-size: 18px; margin-top: 36px; } }
+.site-legal { padding: 0 24px 24px; text-align: center; font-size: 13px; line-height: 1.5; }
+.site-legal a { display: inline-block; min-height: 44px; padding: 12px 4px; color: #a1a1aa; text-decoration: none; border-bottom: 0; transition: color .15s ease; }
+.site-legal a:hover, .site-legal a:focus-visible { color: #f3f4f6; }
+.site-legal a:focus-visible { outline: 2px solid #1ed760; outline-offset: 2px; border-radius: 4px; }
 </style>
 </head>
 <body>
@@ -45,8 +49,8 @@ a:focus-visible { outline: 2px solid #1ed760; outline-offset: 3px; border-radius
 <article>
 <h1>Timeheld Beta Privacy Policy</h1>
 <dl class="policy-meta">
-<div><dt>Version</dt><dd>1.4</dd></div>
-<div><dt>Effective date</dt><dd>October 30, 2026</dd></div>
+<div><dt>Version</dt><dd>1.5</dd></div>
+<div><dt>Effective date</dt><dd>October 31, 2026</dd></div>
 <div><dt>Covers</dt><dd>The Timeheld private beta distributed through Apple TestFlight only</dd></div>
 </dl>
 <h2 id="section-1">1. Who we are</h2>
@@ -67,9 +71,9 @@ a:focus-visible { outline: 2px solid #1ed760; outline-offset: 3px; border-radius
 <h2 id="section-5">5. Why we use it and our legal basis</h2>
 <p>We use your information <strong>to run your account, give you access to the beta and manage the Tester Agreement</strong> (EU legal basis: contract, GDPR Art. 6(1)(b)); <strong>to fix and improve Timeheld</strong> using TestFlight crash reports, diagnostics and your feedback; and <strong>to keep Timeheld secure and keep proof of the Tester Agreement</strong> in case of a legal claim (EU legal basis for both: legitimate interests, Art. 6(1)(f)). <strong>In Canada</strong>, we rely on your consent, which you give by joining the beta. You can withdraw it at any time (section 9), but you may then no longer be able to test the beta.</p>
 <h2 id="section-6">6. Who we share it with</h2>
-<p>Only our service providers: <strong>Apple</strong> (TestFlight, iCloud, Sign in with Apple and Apple Push Notification service), <strong>Supabase</strong> (hosting of our account service), <strong>Google</strong> (Gmail, which we use to receive support email and to email testers) and <strong>Namecheap</strong> (email forwarding for <a href="mailto:support@timeheld.app">support@timeheld.app</a>), plus authorities if the law requires it. Signed Tester Agreements are kept on our own computer, not with a third-party service. Apple does not allow us to share TestFlight data with third parties, and we don't.</p>
+<p>Only our service providers: <strong>Apple</strong> (TestFlight, iCloud, Sign in with Apple and Apple Push Notification service), <strong>Supabase</strong> (hosting of our account service), <strong>Google</strong> (Gmail, which we use to receive support email and to email testers) and <strong>Cloudflare</strong> (email forwarding for <a href="mailto:support@timeheld.app">support@timeheld.app</a> and hosting of the timeheld.app website), plus authorities if the law requires it. Signed Tester Agreements are kept on our own computer, not with a third-party service. Apple does not allow us to share TestFlight data with third parties, and we don't.</p>
 <h2 id="section-7">7. International transfers</h2>
-<p>We are based in Canada. Our account service's database is set up in Supabase's Canada Central region, but our providers (Apple, Supabase, Google and Namecheap) may process some data, such as logs or support email, in other countries under their own terms and safeguards. If you live in the EU, you provide your information directly to us in Canada. The European Commission recognises Canada as providing adequate protection for personal information handled by organisations subject to Canada's federal private-sector privacy law (PIPEDA) in the course of commercial activities.</p>
+<p>We are based in Canada. Our account service's database is set up in Supabase's Canada Central region, but our providers (Apple, Supabase, Google and Cloudflare) may process some data, such as logs or support email, in other countries under their own terms and safeguards. If you live in the EU, you provide your information directly to us in Canada. The European Commission recognises Canada as providing adequate protection for personal information handled by organisations subject to Canada's federal private-sector privacy law (PIPEDA) in the course of commercial activities.</p>
 <h2 id="section-8">8. How long we keep it</h2>
 <ul>
 <li><strong>Account service data:</strong> while your account exists. <strong>In the app</strong>, Delete account deletes your account and its records from the account service, asks Apple to revoke Timeheld's Sign in with Apple access and clears your Timeheld study content from your private iCloud. Deletion must wait until an active session or current sleep block ends. Settings needed for an existing 48-hour restriction commitment may remain until that commitment ends and cleanup can finish. Updated offline devices clear their associated study data after reconnecting and confirming deletion, once active protection permits cleanup. Connectivity or service errors can delay completion; interrupted deletion can be resumed from account settings. A few small records stay in your private iCloud holding only a deletion marker with a one-way hash of your account ID, so other devices don't restore old data; they are not removed automatically (you can delete Timeheld's data in Apple's iCloud settings). Each device also keeps its installation ID and an account hash, and iPhone and iPad keep a restriction-commitment file. A hashed deletion receipt, with no account ID, Apple ID or email, is used to confirm the deletion for <strong>30 days</strong>; it may stay in our database after that until it is removed when a later deletion is processed.</li>
@@ -84,8 +88,9 @@ a:focus-visible { outline: 2px solid #1ed760; outline-offset: 3px; border-radius
 <p>If you are not satisfied, you can complain to the <strong>Office of the Privacy Commissioner of Canada</strong> (priv.gc.ca) or, in the EU, to the <strong>data protection supervisory authority</strong> where you live.</p>
 <h2 id="section-10">10. Security, changes and contact</h2>
 <p>Timeheld uses Sign in with Apple and encrypted HTTPS. Each device stores its local copy of sign-in credentials in that device's Keychain. Our account service also processes authentication tokens and stores the account identifiers described in section 4; unfinished deletion may retain an encrypted Apple revocation token. Cached account and access validation can remain valid offline for up to 72 hours, subject to earlier access-grant expiry. You may need to reconnect to refresh access; existing protection commitments can continue. No system is completely secure; we will tell you and the authorities about any breach as the law requires. We will email you about important changes to this policy before they take effect. Questions: <strong><a href="mailto:support@timeheld.app">support@timeheld.app</a></strong>.</p>
-<p><strong>Changes from version 1.3:</strong> we shortened the description of how the app works with Apple services in section 4. Nothing else changed.</p>
+<p><strong>Changes from version 1.4:</strong> Cloudflare has replaced Namecheap as the service that forwards email sent to <a href="mailto:support@timeheld.app">support@timeheld.app</a>, and it also hosts the timeheld.app website (sections 6 and 7). Nothing else changed.</p>
 </article>
 </main>
+<footer class="site-legal"><a href="/privacy/website/">Website privacy</a></footer>
 </body>
 </html>
