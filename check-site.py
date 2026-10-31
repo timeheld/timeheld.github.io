@@ -8,7 +8,7 @@ preserved=Path(__file__).parent/'preserved'/'full-site'
 preserved_home=preserved/'index.html'
 # Pages hidden behind redirect stubs while the coming-soon placeholder is live.
 STUBS=['downloads/index.html','guide/index.html','releases/index.html','404.html']
-# /privacy/ is live: the approved Timeheld Beta Privacy Policy v1.5 (indexable, no redirect).
+# /privacy/ is live: the approved Timeheld Beta Privacy Policy v1.6 (indexable, no redirect).
 LIVE_PRIVACY='privacy/index.html'
 # /privacy/website/ is live: the approved Timeheld Website Privacy Notice v1.0 (indexable, no redirect, new page).
 LIVE_NOTICE='privacy/website/index.html'
@@ -65,7 +65,7 @@ for rel in STUBS:
  if not (preserved/rel).exists():errors.append(f'Preserved original missing: preserved/full-site/{rel}')
 # Live privacy policy: indexable, canonical, no redirect, no scripts or external requests.
 priv=(root/LIVE_PRIVACY).read_text() if (root/LIVE_PRIVACY).exists() else ''
-for need in ['<title>Timeheld Beta Privacy Policy — Timeheld</title>','<link rel="canonical" href="https://timeheld.app/privacy/">','<meta name="description" content="','<h1>Timeheld Beta Privacy Policy</h1>','<dd>1.5</dd>','src="/assets/wordmark-light.svg"',LEGAL_FOOTER]:
+for need in ['<title>Timeheld Beta Privacy Policy — Timeheld</title>','<link rel="canonical" href="https://timeheld.app/privacy/">','<meta name="description" content="','<h1>Timeheld Beta Privacy Policy</h1>','<dd>1.6</dd>','src="/assets/wordmark-light.svg"',LEGAL_FOOTER]:
  if need not in priv:errors.append(f'dist/{LIVE_PRIVACY}: live policy page missing {need}')
 for bad in ['noindex','http-equiv="refresh"','location.replace','<script','<iframe','<form','http://','Draft','DRAFT']:
  if bad in priv:errors.append(f'dist/{LIVE_PRIVACY}: live policy page must not contain {bad}')
@@ -97,4 +97,4 @@ for file in root.rglob('*'):
  if file.is_file() and file.suffix.lower() in ['.zip','.dmg','.pkg','.mobileprovision','.provisionprofile','.p8','.p12','.pem']:
   errors.append(f'Forbidden distributable or sensitive file: {file}')
 assert not errors, '\n'.join(errors)
-print(f'Passed: {len(list(root.rglob("*.html")))} public pages (placeholder, live privacy policy v1.5, website privacy notice v1.0, {len(STUBS)} redirect stubs) + {len(list(preserved.rglob("*.html")))} preserved pages, all local links/anchors, landmarks, alt text; no app binary downloads, sensitive files or unapproved email addresses.')
+print(f'Passed: {len(list(root.rglob("*.html")))} public pages (placeholder, live privacy policy v1.6, website privacy notice v1.0, {len(STUBS)} redirect stubs) + {len(list(preserved.rglob("*.html")))} preserved pages, all local links/anchors, landmarks, alt text; no app binary downloads, sensitive files or unapproved email addresses.')

@@ -16,7 +16,7 @@ Instagram for announcements" line (https://www.instagram.com/timeheld.app/, new 
 `rel="noopener noreferrer"`, inline SVG glyph), plus a `Website privacy` footer link to
 `/privacy/website/`. Nothing else. The full
 homepage is preserved unchanged at `preserved/full-site/index.html` (not deployed).
-`/privacy/` is live: the Timeheld Beta Privacy Policy v1.5 (`dist/privacy/index.html`,
+`/privacy/` is live: the Timeheld Beta Privacy Policy v1.6 (`dist/privacy/index.html`,
 indexable, wording pinned by `tests/privacy-policy.test.mjs`). `/privacy/website/` is live:
 the Timeheld Website Privacy Notice v1.0 (`dist/privacy/website/index.html`, indexable, wording
 pinned by `tests/website-privacy-notice.test.mjs`). The placeholder and `/privacy/` carry a small

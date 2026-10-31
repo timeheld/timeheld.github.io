@@ -7,7 +7,7 @@ import { join, relative } from 'node:path';
 const root = new URL('../', import.meta.url).pathname;
 const read = (path) => readFileSync(join(root, path), 'utf8');
 const sha = (path) => createHash('sha256').update(readFileSync(join(root, path))).digest('hex');
-// /privacy/ is live (Timeheld Beta Privacy Policy v1.5); tests/privacy-policy.test.mjs covers it.
+// /privacy/ is live (Timeheld Beta Privacy Policy v1.6); tests/privacy-policy.test.mjs covers it.
 // /privacy/website/ is live (Timeheld Website Privacy Notice v1.0); tests/website-privacy-notice.test.mjs covers it.
 const STUBS = ['downloads/index.html', 'guide/index.html', 'releases/index.html', '404.html'];
 // sha256 of each page on main 0e955a6 (tag full-site-before-placeholder), before it became a stub.

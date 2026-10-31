@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 
-// /privacy/ is live: the Timeheld Beta Privacy Policy v1.5 (effective October 31, 2026), approved by
+// /privacy/ is live: the Timeheld Beta Privacy Policy v1.6 (effective October 31, 2026), approved by
 // JK for publication with the wording exactly as written. Only the markdown structure was converted.
 const html = readFileSync(new URL('../dist/privacy/index.html', import.meta.url), 'utf8');
 const article = html.match(/<article>([\s\S]*)<\/article>/)?.[1] ?? '';
@@ -35,15 +35,20 @@ test('privacy page uses the placeholder look: black, Inter, green accents, logo 
   assert.deepEqual([...html.matchAll(/(?:src|href)="(https?:[^"]*)"/g)].map((m) => m[1]), ['https://timeheld.app/privacy/']);
 });
 
-test('privacy page carries the v1.5 policy, all ten sections, and no draft label', () => {
+test('privacy page carries the v1.6 policy, all ten sections, and no draft label', () => {
   assert.ok(!/draft/i.test(html), 'no Draft label');
   assert.match(html, /<h1>Timeheld Beta Privacy Policy<\/h1>/);
-  assert.match(policyText, /^Timeheld Beta Privacy Policy Version 1\.5 Effective date October 31, 2026 Covers The Timeheld private beta distributed through Apple TestFlight only 1\. Who we are /);
+  assert.match(policyText, /^Timeheld Beta Privacy Policy Version 1\.6 Effective date October 31, 2026 Covers The Timeheld private beta distributed through Apple TestFlight only 1\. Who we are /);
   const sections = [...article.matchAll(/<h2 id="section-(\d+)">([^<]+)<\/h2>/g)].map((m) => m[2]);
   assert.deepEqual(sections, ['1. Who we are', '2. What this policy covers', '3. What Apple collects through TestFlight',
     '4. What the beta app uses, and where it goes', '5. Why we use it and our legal basis', '6. Who we share it with',
     '7. International transfers', '8. How long we keep it', '9. Your rights', '10. Security, changes and contact']);
-  assert.match(policyText, / Questions: support@timeheld\.app\. Changes from version 1\.4: Cloudflare has replaced Namecheap as the service that forwards email sent to support@timeheld\.app, and it also hosts the timeheld\.app website \(sections 6 and 7\)\. Nothing else changed\.$/);
+  assert.match(policyText, / Questions: support@timeheld\.app\. Changes from version 1\.5: we added what is stored for background updates \(section 4\) and updated how to delete your account during the beta \(sections 4 and 8\)\.$/);
+  assert.match(policyText, / Background updates: in newer versions of the beta, the account service stores a push token for your device /);
+  assert.match(policyText, / Account service data: while your account exists\. During the beta, ask for deletion by email at support@timeheld\.app, /);
+  for (const word of ['Live Activit', 'relay', 'broadcast', 'channel']) {
+    assert.ok(!html.toLowerCase().includes(word.toLowerCase()), `no ${word} wording anywhere on the page`);
+  }
   assert.match(policyText, / and Cloudflare \(email forwarding for support@timeheld\.app and hosting of the timeheld\.app website\), plus authorities /);
   assert.match(policyText, /our providers \(Apple, Supabase, Google and Cloudflare\) may process/);
   assert.ok(!policyText.includes('any earlier project'), 'v1.2 Other records wording removed');
@@ -53,14 +58,16 @@ test('privacy page carries the v1.5 policy, all ten sections, and no draft label
   assert.ok(!policyText.includes('Notifications and Live Activities'), 'v1.3 section 4 bullet removed');
   assert.ok(!policyText.includes('Changes from version 1.2'), 'v1.3 closing note replaced');
   assert.ok(!policyText.includes('Changes from version 1.3'), 'v1.4 closing note replaced');
+  assert.ok(!policyText.includes('Changes from version 1.4'), 'v1.5 closing note replaced');
+  assert.ok(!policyText.includes('meanwhile your account is paused'), 'v1.5 deletion pause wording replaced');
   assert.ok(!policyText.includes('Namecheap (email forwarding'), 'v1.4 Namecheap provider entry replaced');
   assert.ok(!policyText.includes('Google and Namecheap'), 'v1.4 Namecheap transfer mention replaced');
-  assert.equal((policyText.match(/Namecheap/g) ?? []).length, 1, 'Namecheap is named only in the changes note');
+  assert.ok(!policyText.includes('Namecheap'), 'Namecheap no longer named');
 });
 
 test('privacy policy wording is pinned exactly as approved', () => {
   // sha256 of the whitespace-normalized article text. Any wording change must be re-approved.
-  assert.equal(createHash('sha256').update(policyText).digest('hex'), 'c264267a9ff208205b5c83f0a2da6c08696fc9104eb1fbd91246b418c52f7ff0');
+  assert.equal(createHash('sha256').update(policyText).digest('hex'), '3b7d658dae5cdc49d9abbcb65e852150aea2006c4ea4431f64be00ca34e80208');
 });
 
 test('privacy page footer links to the website privacy notice', () => {
