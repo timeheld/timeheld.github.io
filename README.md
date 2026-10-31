@@ -1,7 +1,7 @@
 # Timeheld website
 
 Buildless marketing site for Timeheld. Editable HTML, CSS and JavaScript live in `dist/`.
-The live site is https://timeheld.app/, deployed from `main` in `timeheld/timeheld.github.io` by the GitHub Pages workflow. The separate `TimeheldWebsite` checkout is the older Sites version; this checkout is the current public source.
+The website source is maintained on `main` in `timeheld/timeheld.github.io`; the repository retains its GitHub Pages workflow. The separate `TimeheldWebsite` checkout is the older Sites version; this checkout is the current public source.
 
 ## Preview
 
@@ -59,3 +59,23 @@ controller regression checks cover repeated pause/resume, ticker ownership and p
 Layout QA includes all preview modes at 320, 390, 768, 1024, 1440 and
 1920 CSS pixels, long stopwatch labels, and the supporting pages. Clock
 explanations sit outside the dial and status rows wrap without clipping.
+
+## Cloudflare automatic deployments
+
+Push website changes to `main` in `timeheld/timeheld.github.io` to deploy
+automatically to https://timeheld-website.jk12-development.workers.dev/.
+Other branches do not deploy automatically. Failed checks keep the previous
+deployment in place.
+
+Cloudflare Workers Builds runs `node cloudflare-build.mjs`, followed by
+`npx --yes wrangler@4.156.0 deploy --config wrangler.generated.json`.
+The build runs the website checks, rejects development files and private
+credentials in `dist/`, regenerates Content Security Policy hashes, and
+publishes only `dist/`. The Wrangler configuration is generated during the build.
+
+Cloudflare's GitHub app is restricted to this website repository. Native app
+source and private app repositories are outside its access. Build credentials
+stay in Cloudflare and are not included in the public website.
+
+View results in the `timeheld-website` Worker under Settings → Builds or
+Deployments. This integration does not change DNS or support email routing.
